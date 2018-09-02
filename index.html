@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Shopping List App</title>
+        <!-- <link rel="stylesheet" href="main.css"> -->
+        <style>
+            li.strike{
+                text-decoration-line: line-through;
+                color: #999;
+            }
+            li {
+                cursor: pointer;
+            }
+        </style>
+
+    </head>
+    <body>
+        <div id="shopping-list">
+            <h1>
+                {{ header }}
+                <button v-if="state === 'defaul'" class="btn btn-primay"  v-on:click="change('edit')">Add Item</button>
+                <button class="btn btn-warning" v-if="state === 'edit'" v-on:click="change('defaul')">Cancel</button>
+            
+            </h1>
+            <input v-if="state === 'edit'" type="text" v-model="newItem" placeholder="Add an item" @keyup.enter="saveItem">
+                
+            <button v-if="state === 'edit'" class="btn btn-primary" :disabled="newItem.length === 0" @click="saveItem">Save Item</button>
+            <span v-if="items.length == 0 ">Nice job ! You've bought all.</span>
+            <ul>
+                <li v-for="item in reservedItems" :class="[item.purchase ? 'strike' : '']" @click="toggleItem(item)">{{ item.label }}</li>
+            </ul>
+            
+        </div>
+    </body>
+    <script src="https://unpkg.com/vue"></script>
+    <script>
+        var shoppingList = new Vue({
+            el: '#shopping-list',
+            data: {
+                state: 'defaul',
+                header: 'shopping list app',
+                newItem: '',
+                items : [
+                    {  
+                        label : 'bag',
+                        purchase : true
+                    },
+                    {  
+                        label : 'second item',
+                        purchase : false
+                    },
+                    {  
+                        label : 'New shirt',
+                        purchase : true
+                    }
+                    
+                ]
+            },
+            computed: {
+                reservedItems() {
+                    return this.items.slice(0).reverse();
+                }
+            },
+            methods: {
+                saveItem: function() {
+                    this.items.push({
+                        label: this.newItem,
+                        purchase:false,
+                    });
+                    this.newItem = '';
+                },
+                change : function(newstate) {
+                    this.state = newstate;
+                },
+                toggleItem : function(item) {
+                    item.purchase = !item.purchase
+                }
+            }
+        });
+    </script>
+</html>
